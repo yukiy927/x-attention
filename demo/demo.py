@@ -16,7 +16,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     config = FastPrefillConfig(metric = args.metric,stride = args.stride, threshold = args.threshold)
     
-    model, tokenizer = load_model(name_or_path="/NFS/raid0/model/llama3-1048k", fastprefillconfig=config)
+    # model, tokenizer = load_model(name_or_path="/NFS/raid0/model/llama3-1048k", fastprefillconfig=config)
+    model, tokenizer = load_model(name_or_path="/lpai/models/meta-llama-3-1-8b-instruct/24-09-10-1/Meta-Llama-3.1-8B-Instruct/", fastprefillconfig=config)
     input_ids = generate_prompt(tokenizer,args.len)
     # -------------------
     # 1. Prefill
@@ -67,5 +68,5 @@ if __name__ == "__main__":
     decode_time = end_decode - start_decode
     print(f"Prefill Time: {prefill_time:.4f} s")
     print(f"Decode Time: {decode_time:.4f} s")
-    output_text = tokenizer.decode(generated_content, skip_special_tokens=True)
+    output_text = tokenizer.decode(generated_content, ski19p_special_tokens=True)
     print("Generated Text:", output_text)

@@ -117,7 +117,7 @@ def tokenizer_speech_question_image_token(prompt, tokenizer, image_token_index=I
     for x in insert_separator(prompt_chunks, special_chunks):
         input_ids.extend(x[offset:])
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     if return_tensors is not None:
         if return_tensors == 'pt':
             return torch.tensor(input_ids, dtype=torch.long)

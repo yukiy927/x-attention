@@ -62,10 +62,11 @@ def find_blocks_chunked(
         indicating which blocks should be attended to.
     """
     assert threshold is None or num_to_choose is None
-    batch_size, head_num, chunk_num, block_num = input_tensor.shape
+    batch_size, head_num, chunk_num, block_num = input_tensor.shape  # torch.size([1, 32, 32, 32])
     # 0 -- -- -- -- current_index
     # 0 -- -- -- -- -- current_index+1
     # 0 -- -- -- -- -- ----------- current_index + chunk_num - 1
+    # import pdb; pdb.set_trace()
     if mode == "prefill" and decoding:
         return torch.ones_like(input_tensor, dtype=torch.bool)
     if mode == "decode" and not decoding:
@@ -89,7 +90,7 @@ def find_blocks_chunked(
     if threshold is not None:
         total_sum = input_tensor.sum(dim=-1, keepdim=True)
         if isinstance(threshold, torch.Tensor):
-            threshold = threshold.to(float)
+            threshold = threshold.to(float)  # torch.Size([32])
             required_sum = total_sum * threshold.unsqueeze(0).unsqueeze(-1).unsqueeze(
                 -1
             ).expand((batch_size, head_num, chunk_num, 1)).to(input_tensor.device)
@@ -188,5 +189,5 @@ def find_blocks_chunked(
             lambda_mask[:,:,:,current_index:current_index+chunk_num] = torch.eye(chunk_num, device=lambda_mask.device).unsqueeze(0).unsqueeze(0).expand(1,head_num,chunk_num,chunk_num)
             assert(torch.where(lambda_mask,mask,True).all())
 
-    return mask
+    return mask # torch.size([1, 32, 32, 32])
 

@@ -47,8 +47,8 @@ if __name__ == "__main__":
         config = FastPrefillConfig(metric = "xattn",stride = 16)
         layer_to_save = 12
         if not os.path.exists(query_path) or not os.path.exists(key_path):
-            
-            model, tokenizer = load_fake_model(name_or_path="meta-llama/Llama-3.1-8B-Instruct", layer_to_save=layer_to_save, target_len=len*1024)
+            # model, tokenizer = load_fake_model(name_or_path="meta-llama/Llama-3.1-8B-Instruct", layer_to_save=layer_to_save, target_len=len*1024)
+            model, tokenizer = load_fake_model(name_or_path="/lpai/models/meta-llama-3-1-8b-instruct/24-09-10-1/Meta-Llama-3.1-8B-Instruct/", layer_to_save=layer_to_save, target_len=len*1024)
             input_ids = generate_prompt(tokenizer,len*1024)
             chunk_size = 4096
             if past_key_values is not None:

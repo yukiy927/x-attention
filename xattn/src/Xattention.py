@@ -36,7 +36,7 @@ def xattn_estimate(
     k_block_num = (k_len + k_num_to_pad) // block_size
     q_chunk_num = (q_len + q_num_to_pad) // chunk_size
     q_block_num = (q_len + q_num_to_pad) // block_size
-
+    # import pdb; pdb.set_trace()
     if k_num_to_pad > 0:
         pad_key_states = F.pad(key_states, (0, 0, 0, k_num_to_pad), value=0).to("cuda")
     else:
