@@ -268,6 +268,7 @@ def softmax_fuse_block_sum(attn_weights_slice, reshaped_block_size, segment_size
             reshaped_block_size,
         )
     else:
+        # @yuki: diffusion model jumps into non-causal mode
         softmax_fuse_block_sum_kernel_non_causal[grid](
             attn_weights_slice,
             output,
