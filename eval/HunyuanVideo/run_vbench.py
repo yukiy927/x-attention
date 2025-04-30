@@ -1,7 +1,7 @@
 import os
 import argparse
 import tqdm
-import random
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--num_sampled_prompts", type=int, default=None)
@@ -62,95 +62,36 @@ attn_name = (
 job_script = "python3 sample_video.py"
 
 pbar = tqdm.tqdm(total=len(prompt_list) * args.num_seed)
-# idx, prompt = 1, prompt_list[0]
-# seed = 1
-# pbar.set_description(f"Sampling attn {args.attn} prompt {prompt} seed {seed}")
-# save_path = f"./results_720p/{attn_name}/{prompt_set_name}/1"
-
-# attn_args = f"--attn {args.attn} "
-# if args.attn == "xattn":
-#     attn_args += f"--attn-warmup-steps {args.attn_warmup_steps} --threshold {args.threshold} --stride {args.stride} "
-# # slurm_params = f"--job-name=hunyuan/{attn_name}/{prompt_set_name}/prompt_{prompt_index[idx]}_seed{seed} slurm_scripts/submit1.sh "
-# os.system(
-#     # f"{slurm_script} "
-#     # f"{slurm_params} "
-#     f"{job_script} "
-#     f"--video-size 720 1280 "
-#     # f"--video-size 544 960 "
-#     f"--video-length 129 "
-#     f"--infer-steps 50 "
-#     f'--prompt "{prompt}" '
-#     f"--flow-reverse "
-#     f"--save-path ./results_720p/{attn_name}/{prompt_set_name}/1 "
-#     f"--seed {seed} {attn_args}"
-#     f"--use_random_seed True"
-# )
-for idx, prompt in enumerate(prompt_list):
-    seed = 1
-    pbar.set_description(
-        f"Sampling attn {args.attn} prompt {prompt} seed {seed}"
-    )
-    save_path = f"./results_720p/{attn_name}/{prompt_set_name}/panda"
-    if os.path.exists(save_path) and any(
-        os.path.isfile(os.path.join(save_path, f))
-        for f in os.listdir(save_path)
-        if f.endswith(".mp4")
-    ):
-        pbar.update(1)
-        print(f"Skipping {save_path} because it already exists")
-        break
-    attn_args = f"--attn {args.attn} "
-    if args.attn == "xattn":
-        attn_args += (
-            f"--attn-warmup-steps {args.attn_warmup_steps} "
-            f"--threshold {args.threshold} "
-            f"--stride {args.stride} "
-        )
-    # slurm_params = f"--job-name=hunyuan/{attn_name}/{prompt_set_name}/prompt_{prompt_index[idx]}_seed{seed} slurm_scripts/submit1.sh "
-    os.system(
-        # f"{slurm_script} "
-        # f"{slurm_params} "
-        f"{job_script} "
-        f"--video-size 720 1280 "
-        # f"--video-size 544 960 "
-        f"--video-length 129 "
-        f"--infer-steps 50 "
-        f'--prompt "{prompt}" '
-        f"--flow-reverse "
-        f"--save-path ./results_720p/{attn_name}/{prompt_set_name}/panda "
-        f"--seed {seed} {attn_args}"
-    )
     
-
-# for idx, prompt in enumerate(prompt_list):
-#     for seed in range(args.num_seed):
-#         pbar.set_description(f"Sampling attn {args.attn} prompt {prompt} seed {seed}")
-#         save_path = f"./results_720p/{attn_name}/{prompt_set_name}/{prompt_index[idx]}"
-#         # if has *.mp4 in save_path, skip
-#         if os.path.exists(save_path) and any(
-#             os.path.isfile(os.path.join(save_path, f))
-#             for f in os.listdir(save_path)
-#             if f.endswith(".mp4")
-#         ):
-#             pbar.update(1)
-#             print(f"Skipping {save_path} because it already exists")
-#             continue
-#         attn_args = f"--attn {args.attn} "
-#         if args.attn == "xattn":
-#             attn_args += f"--attn-warmup-steps {args.attn_warmup_steps} --threshold {args.threshold} --stride {args.stride} "
-#         # slurm_params = f"--job-name=hunyuan/{attn_name}/{prompt_set_name}/prompt_{prompt_index[idx]}_seed{seed} slurm_scripts/submit1.sh "
-#         os.system(
-#             # f"{slurm_script} "
-#             # f"{slurm_params} "
-#             f"{job_script} "
-#             f"--video-size 720 1280 "
-#             # f"--video-size 544 960 "
-#             f"--video-length 129 "
-#             f"--infer-steps 50 "
-#             f'--prompt "{prompt}" '
-#             f"--flow-reverse "
-#             f"--save-path ./results_720p/{attn_name}/{prompt_set_name}/{prompt_index[idx]} "
-#             f"--seed {seed} {attn_args}"
-#         )
+for idx, prompt in enumerate(prompt_list):
+    for seed in range(args.num_seed):
+        pbar.set_description(f"Sampling attn {args.attn} prompt {prompt} seed {seed}")
+        save_path = f"./results_720p/{attn_name}/{prompt_set_name}/{prompt_index[idx]}"
+        # if has *.mp4 in save_path, skip
+        if os.path.exists(save_path) and any(
+            os.path.isfile(os.path.join(save_path, f))
+            for f in os.listdir(save_path)
+            if f.endswith(".mp4")
+        ):
+            pbar.update(1)
+            print(f"Skipping {save_path} because it already exists")
+            continue
+        attn_args = f"--attn {args.attn} "
+        if args.attn == "xattn":
+            attn_args += f"--attn-warmup-steps {args.attn_warmup_steps} --threshold {args.threshold} --stride {args.stride} "
+        # slurm_params = f"--job-name=hunyuan/{attn_name}/{prompt_set_name}/prompt_{prompt_index[idx]}_seed{seed} slurm_scripts/submit1.sh "
+        os.system(
+            # f"{slurm_script} "
+            # f"{slurm_params} "
+            f"{job_script} "
+            f"--video-size 720 1280 "
+            # f"--video-size 544 960 "
+            f"--video-length 129 "
+            f"--infer-steps 1 "
+            f'--prompt "{prompt}" '
+            f"--flow-reverse "
+            f"--save-path ./results_720p/{attn_name}/{prompt_set_name}/{prompt_index[idx]} "
+            f"--seed {seed} {attn_args}"
+        )
 
 print(len(prompt_list))

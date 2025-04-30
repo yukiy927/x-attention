@@ -7,7 +7,12 @@ from datetime import datetime
 from hyvideo.utils.file_utils import save_videos_grid
 from hyvideo.config import parse_args
 from hyvideo.inference import HunyuanVideoSampler
+import torch
 
+def trace_handler(prof):
+    print(prof.key_averages().table(
+        sort_by="self_cuda_time_total", row_limit=-1))
+    prof.export_chrome_trace("./xattn_trace_" + str(1) + ".json")
 
 def main():
     args = parse_args()
@@ -29,21 +34,41 @@ def main():
 
     # Start sampling
     # TODO: batch inference check
-    outputs = hunyuan_video_sampler.predict(
-        prompt=args.prompt, 
-        height=args.video_size[0],
-        width=args.video_size[1],
-        video_length=args.video_length,
-        seed=args.seed,
-        negative_prompt=args.neg_prompt,
-        infer_steps=args.infer_steps,
-        guidance_scale=args.cfg_scale,
-        num_videos_per_prompt=args.num_videos,
-        flow_shift=args.flow_shift,
-        batch_size=args.batch_size,
-        embedded_guidance_scale=args.embedded_cfg_scale
-    )
-    samples = outputs['samples']
+    # import nvtx
+    # with nvtx.annotate("xattn inference iter_1", color="blue"):
+    
+    with torch.profiler.profile(
+        activities=[
+        torch.profiler.ProfilerActivity.CPU,
+        torch.profiler.ProfilerActivity.CUDA,
+    ],
+        # schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
+        on_trace_ready=trace_handler,
+        # on_trace_ready=torch.profiler.tensorboard_trace_handler("log/hunyuan_video"),
+        record_shapes=True,
+        profile_memory=True,
+        with_stack=True,
+        with_flops=True,
+        use_cuda=True,
+    ) as prof:
+        outputs = hunyuan_video_sampler.predict(
+            prompt=args.prompt, 
+            height=args.video_size[0],
+            width=args.video_size[1],
+            video_length=args.video_length,
+            seed=args.seed,
+            negative_prompt=args.neg_prompt,
+            infer_steps=args.infer_steps,
+            guidance_scale=args.cfg_scale,
+            num_videos_per_prompt=args.num_videos,
+            flow_shift=args.flow_shift,
+            batch_size=args.batch_size,
+            embedded_guidance_scale=args.embedded_cfg_scale
+        )
+        samples = outputs['samples']
+
+    # print(p.key_averages().table(
+    #     sort_by="self_cuda_time_total", row_limit=-1))
     
     # Save samples
     if 'LOCAL_RANK' not in os.environ or int(os.environ['LOCAL_RANK']) == 0:

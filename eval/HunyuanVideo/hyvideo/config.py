@@ -229,7 +229,7 @@ def add_inference_args(parser: argparse.ArgumentParser):
     group.add_argument(
         "--dit-weight",
         type=str,
-        default="ckpts/hunyuan-video-t2v-720p/transformers/mp_rank_00_model_states.pt",
+        default="/lpai/volumes/ad-jointmodel-bd-ga/yyx/x-attention/eval/HunyuanVideo/ckpts/hunyuan-video-t2v-720p/transformers/mp_rank_00_model_states.pt",
         help="Path to the HunyuanVideo model. If None, search the model in the args.model_root."
         "1. If it is a file, load the model directly."
         "2. If it is a directory, search the model in the directory. Support two types of models: "
